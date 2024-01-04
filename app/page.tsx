@@ -38,6 +38,7 @@ const Home = () => {
   async function addToDo() {
     if (loading) return;
     setLoading(true);
+    provider = new BrowserProvider((window as any).ethereum);
     const signer = await provider!.getSigner();
     const mycontract = new ethers.Contract(deployAddress, abi, signer);
     await mycontract
@@ -64,6 +65,8 @@ const Home = () => {
   async function deleteTodo(index: number) {
     if (loading || !provider) return;
     setLoading(true);
+    provider = new BrowserProvider((window as any).ethereum);
+
     const signer = await provider!.getSigner();
     const mycontract = new ethers.Contract(deployAddress, abi, signer);
     const deletingTodo = todos[index];
@@ -97,6 +100,8 @@ const Home = () => {
       console.log("getting todos");
       setLoading(true);
       try {
+        provider = new BrowserProvider((window as any).ethereum);
+
         const signer = await provider!.getSigner();
         const mycontract = new ethers.Contract(deployAddress, abi, signer);
         const todos = await mycontract.getTodos();
