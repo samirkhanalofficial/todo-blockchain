@@ -150,7 +150,7 @@ export default function Home() {
         </TableHeader>
 
         <TableBody>
-          {todos.reverse().map((todo, index) => (
+          {todos.toReversed().map((todo, index) => (
             <TableRow key={todo + index}>
               <TableCell>{index + 1}</TableCell>
               <TableCell>{todo}</TableCell>
