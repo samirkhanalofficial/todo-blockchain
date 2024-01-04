@@ -93,7 +93,8 @@ export default function Home() {
     if (loading) return;
     setLoading(true);
     try {
-      const mycontract = new ethers.Contract(deployAddress, abi, provider);
+      const signer = await provider!.getSigner();
+      const mycontract = new ethers.Contract(deployAddress, abi, signer);
       const todos = await mycontract.getTodos();
       setTodos(todos);
       setLoading(false);
