@@ -26,8 +26,9 @@ export default function Home() {
   var provider: BrowserProvider | null;
 
   useMemo(() => {
+    "use client";
     getTodos();
-    if (!window) return;
+    if (window == undefined) return;
     provider = new BrowserProvider((window as any).ethereum);
   }, []);
 
