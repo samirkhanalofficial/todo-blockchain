@@ -22,9 +22,14 @@ export default function Home() {
   const { toast } = useToast();
   const [todos, setTodos] = useState<string[]>([]);
   const [todo, setTodo] = useState<string>("");
+  const [loading, setLoading] = useState(false);
+  useMemo(() => {
+    getTodos();
+  }, []);
+  if (!window) return;
+
   const provider = new BrowserProvider((window as any).ethereum);
   const deployAddress = "0x00a4efd81C06Cd3871cF8341fC494210DDEbe789";
-  const [loading, setLoading] = useState(false);
   async function addToDo() {
     if (loading) return;
     setLoading(true);
@@ -81,26 +86,24 @@ export default function Home() {
       })
       .finally(() => setLoading(false));
   }
-  useMemo(() => {
-    async function getTodos() {
-      if (loading) return;
-      setLoading(true);
-      try {
-        const mycontract = new ethers.Contract(deployAddress, abi, provider);
-        const todos = await mycontract.getTodos();
-        setTodos(todos);
-        setLoading(false);
-      } catch (e) {
-        setLoading(false);
+  async function getTodos() {
+    if (loading) return;
+    setLoading(true);
+    try {
+      const mycontract = new ethers.Contract(deployAddress, abi, provider);
+      const todos = await mycontract.getTodos();
+      setTodos(todos);
+      setLoading(false);
+    } catch (e) {
+      setLoading(false);
 
-        toast({
-          title: "Error Getting Todos",
-          description: "Please install metamask and refresh the page.",
-        });
-      }
+      toast({
+        title: "Error Getting Todos",
+        description: "Please install metamask and refresh the page.",
+      });
     }
-    getTodos();
-  }, []);
+  }
+
   return (
     <main className="p-5">
       <form
