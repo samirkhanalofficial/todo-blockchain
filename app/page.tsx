@@ -23,13 +23,13 @@ export default function Home() {
   const [todos, setTodos] = useState<string[]>([]);
   const [todo, setTodo] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  var provider: BrowserProvider | null;
+  const [provider, setProvider] = useState<BrowserProvider | null>();
 
-  useMemo(() => {
+  useLayoutEffect(() => {
     "use client";
     getTodos();
     if (window == undefined) return;
-    provider = new BrowserProvider((window as any).ethereum);
+    setProvider(new BrowserProvider((window as any).ethereum));
   }, []);
 
   const deployAddress = "0x00a4efd81C06Cd3871cF8341fC494210DDEbe789";
