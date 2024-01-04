@@ -63,9 +63,10 @@ const Home = () => {
       .finally(() => setLoading(false));
   }
   async function deleteTodo(index: number) {
-    if (loading || !provider) return;
-    setLoading(true);
+    if (loading) return;
     provider = new BrowserProvider((window as any).ethereum);
+
+    setLoading(true);
 
     const signer = await provider!.getSigner();
     const mycontract = new ethers.Contract(deployAddress, abi, signer);
