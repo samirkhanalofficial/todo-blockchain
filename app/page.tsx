@@ -23,17 +23,19 @@ export default function Home() {
   const [todos, setTodos] = useState<string[]>([]);
   const [todo, setTodo] = useState<string>("");
   const [loading, setLoading] = useState(false);
+  var provider: BrowserProvider | null;
+
   useMemo(() => {
     getTodos();
+    if (!window) return;
+    provider = new BrowserProvider((window as any).ethereum);
   }, []);
-  if (!window) return;
 
-  const provider = new BrowserProvider((window as any).ethereum);
   const deployAddress = "0x00a4efd81C06Cd3871cF8341fC494210DDEbe789";
   async function addToDo() {
     if (loading) return;
     setLoading(true);
-    const signer = await provider.getSigner();
+    const signer = await provider!.getSigner();
     const mycontract = new ethers.Contract(deployAddress, abi, signer);
     await mycontract
       .addTodo(todo)
@@ -59,7 +61,7 @@ export default function Home() {
   async function deleteTodo(index: number) {
     if (loading) return;
     setLoading(true);
-    const signer = await provider.getSigner();
+    const signer = await provider!.getSigner();
     const mycontract = new ethers.Contract(deployAddress, abi, signer);
     const deletingTodo = todos[index];
     await mycontract
