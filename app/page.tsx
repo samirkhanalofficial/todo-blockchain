@@ -23,14 +23,15 @@ export default function Home() {
   const [todos, setTodos] = useState<string[]>([]);
   const [todo, setTodo] = useState<string>("");
   const [loading, setLoading] = useState(false);
-  const [provider, setProvider] = useState<BrowserProvider | null>();
+  const [firstRender, setFirstRender] = useState(true);
+  var provider: BrowserProvider | null;
 
   useLayoutEffect(() => {
     "use client";
+    if (!window || !firstRender) return;
+    provider = new BrowserProvider((window as any).ethereum);
     getTodos();
-    if (window == undefined) return;
-    setProvider(new BrowserProvider((window as any).ethereum));
-  }, []);
+  }, [firstRender]);
 
   const deployAddress = "0x00a4efd81C06Cd3871cF8341fC494210DDEbe789";
   async function addToDo() {
@@ -60,7 +61,7 @@ export default function Home() {
       .finally(() => setLoading(false));
   }
   async function deleteTodo(index: number) {
-    if (loading) return;
+    if (loading || !provider) return;
     setLoading(true);
     const signer = await provider!.getSigner();
     const mycontract = new ethers.Contract(deployAddress, abi, signer);
@@ -91,20 +92,30 @@ export default function Home() {
   }
   async function getTodos() {
     if (loading) return;
-    setLoading(true);
     try {
-      const signer = await provider!.getSigner();
-      const mycontract = new ethers.Contract(deployAddress, abi, signer);
-      const todos = await mycontract.getTodos();
-      setTodos(todos);
-      setLoading(false);
-    } catch (e) {
-      setLoading(false);
+      console.log("getting todos");
+      setLoading(true);
+      try {
+        const signer = await provider!.getSigner();
+        const mycontract = new ethers.Contract(deployAddress, abi, signer);
+        const todos = await mycontract.getTodos();
+        setTodos(todos);
+        setLoading(false);
+      } catch (e) {
+        setLoading(false);
 
+        toast({
+          title: "Error Getting Todos",
+          description: "Please install metamask and refresh the page.",
+        });
+      }
+    } catch (e) {
+      console.log(e);
       toast({
         title: "Error Getting Todos",
         description: "Please install metamask and refresh the page.",
       });
+      setLoading(false);
     }
   }
 
