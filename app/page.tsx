@@ -150,17 +150,18 @@ export default function Home() {
         </TableHeader>
 
         <TableBody>
-          {todos.toReversed().map((todo, index) => (
-            <TableRow key={todo + index}>
-              <TableCell>{index + 1}</TableCell>
-              <TableCell>{todo}</TableCell>
-              <TableCell>
-                <Button onClick={() => deleteTodo(todos.length - 1 - index)}>
-                  Delete
-                </Button>
-              </TableCell>
-            </TableRow>
-          ))}
+          {!!window &&
+            todos.toReversed().map((todo, index) => (
+              <TableRow key={todo + index}>
+                <TableCell>{index + 1}</TableCell>
+                <TableCell>{todo}</TableCell>
+                <TableCell>
+                  <Button onClick={() => deleteTodo(todos.length - 1 - index)}>
+                    Delete
+                  </Button>
+                </TableCell>
+              </TableRow>
+            ))}
         </TableBody>
       </Table>
       {loading && (
