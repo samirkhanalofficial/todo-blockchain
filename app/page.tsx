@@ -17,8 +17,9 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import { Input } from "@/components/ui/input";
+import dynamic from "next/dynamic";
 
-export default function Home() {
+const Home = () => {
   const { toast } = useToast();
   const [todos, setTodos] = useState<string[]>([]);
   const [todo, setTodo] = useState<string>("");
@@ -118,6 +119,7 @@ export default function Home() {
       setLoading(false);
     }
   }
+  if (!window) return;
 
   return (
     <main className="p-5">
@@ -150,25 +152,17 @@ export default function Home() {
         </TableHeader>
 
         <TableBody>
-          {!window ? (
-            <></>
-          ) : (
-            <>
-              {todos.toReversed().map((todo, index) => (
-                <TableRow key={todo + index}>
-                  <TableCell>{index + 1}</TableCell>
-                  <TableCell>{todo}</TableCell>
-                  <TableCell>
-                    <Button
-                      onClick={() => deleteTodo(todos.length - 1 - index)}
-                    >
-                      Delete
-                    </Button>
-                  </TableCell>
-                </TableRow>
-              ))}
-            </>
-          )}
+          {todos.toReversed().map((todo, index) => (
+            <TableRow key={todo + index}>
+              <TableCell>{index + 1}</TableCell>
+              <TableCell>{todo}</TableCell>
+              <TableCell>
+                <Button onClick={() => deleteTodo(todos.length - 1 - index)}>
+                  Delete
+                </Button>
+              </TableCell>
+            </TableRow>
+          ))}
         </TableBody>
       </Table>
       {loading && (
@@ -178,4 +172,9 @@ export default function Home() {
       )}
     </main>
   );
-}
+};
+
+const YourComponent = dynamic(() => Promise.resolve(Home), {
+  ssr: false,
+});
+export default YourComponent;
